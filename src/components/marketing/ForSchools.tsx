@@ -63,11 +63,11 @@ export function ForSchools() {
               navigate('/demo');
             }}
           >
-            Book a demo
+            Explore the parent preview
           </Button>
 
           <p className="text-[16px]" style={{ color: '#D5DCE6' }}>
-            Start with a free one-term pilot for Year 7.
+            See the sample parent experience before planning a school pilot.
           </p>
         </div>
       </Container>
