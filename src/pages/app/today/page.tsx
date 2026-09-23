@@ -61,10 +61,20 @@ export default function Today() {
   const marked = markedTasks(child);
 
   return (
-    <div className="flex flex-col gap-6 pb-6">
-      <h1 className="sr-only">Today</h1>
+    <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-6 pb-6 lg:gap-8">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
+        <div>
+          <p className="mb-2 text-[13px] font-bold uppercase tracking-[0.12em] text-accent">Your parent view</p>
+          <h1 className="text-[32px] leading-tight text-ink md:text-[44px]">Today for {child.name}</h1>
+          <p className="mt-2 text-[16px] text-ink-2">A clear picture of what needs doing and how the week is shaping up.</p>
+        </div>
+        <div className="rounded-xl border border-line bg-surface px-5 py-3">
+          <p className="text-[13px] font-bold text-ink-3">Planned tonight</p>
+          <p className="font-display text-[25px] font-semibold text-ink">{tonightMinutes} <span className="font-sans text-[14px] font-normal">min</span></p>
+        </div>
+      </div>
 
-      <Card tone={overdue ? 'warn' : 'good'}>
+      <Card tone={overdue ? 'warn' : 'good'} className="md:p-6">
         <div className="flex items-start gap-3">
           <span
             className={
@@ -103,22 +113,39 @@ export default function Today() {
         </div>
       </Card>
 
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-8">
+      <div className="flex min-w-0 flex-col gap-8">
       <section className="flex flex-col gap-3">
         <div className="flex items-baseline justify-between gap-3">
           <h2 className="text-[26px] text-ink">Tonight</h2>
           <p className="text-[15px] text-ink-3">about {tonightMinutes} min</p>
         </div>
 
-        <ul className="m-0 flex list-none flex-col gap-3 p-0">
-          {tonight.map((task) => (
-            <li key={task.id}>
-              <TaskRow task={task} />
-            </li>
-          ))}
-        </ul>
+        {tonight.length ? (
+          <ul className="m-0 flex list-none flex-col gap-3 p-0">
+            {tonight.map((task) => <li key={task.id}><TaskRow task={task} /></li>)}
+          </ul>
+        ) : (
+          <Card tone="quiet"><p className="font-bold text-ink">Nothing planned tonight</p><p className="text-[15px] text-ink-2">You can still look ahead at the rest of the week.</p></Card>
+        )}
       </section>
 
-      <Link to="/app/week" className="block">
+      <section className="flex flex-col gap-3">
+        <h2 className="text-[26px] text-ink">Recently marked</h2>
+
+        {marked.length ? (
+          <ul className="m-0 flex list-none flex-col gap-3 p-0">
+            {marked.map((task) => <li key={task.id}><TaskRow task={task} /></li>)}
+          </ul>
+        ) : <p className="rounded-xl border border-dashed border-line-strong p-5 text-[15px] text-ink-3">No marked homework to show yet.</p>}
+      </section>
+
+      <p className="text-[15px] text-ink-3">
+        Every mark is checked by your child&apos;s teacher before you see it.
+      </p>
+      </div>
+
+      <Link to="/app/week" className="block lg:sticky lg:top-[84px]">
         <Card className="transition-colors hover:border-line-strong">
           <div className="flex items-baseline justify-between gap-3">
             <p className="text-[19px] font-bold text-ink">This week</p>
@@ -160,21 +187,7 @@ export default function Today() {
         </Card>
       </Link>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-[26px] text-ink">Recently marked</h2>
-
-        <ul className="m-0 flex list-none flex-col gap-3 p-0">
-          {marked.map((task) => (
-            <li key={task.id}>
-              <TaskRow task={task} />
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <p className="text-[15px] text-ink-3">
-        Every mark is checked by your child&apos;s teacher before you see it.
-      </p>
+      </div>
     </div>
   );
 }
