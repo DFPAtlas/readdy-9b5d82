@@ -51,7 +51,7 @@ export function Hero() {
                   navigate('/demo');
                 }}
               >
-                Book a demo for your school
+                Explore the parent preview
               </Button>
 
               <Button
