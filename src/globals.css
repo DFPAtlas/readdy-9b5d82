@@ -1,0 +1,167 @@
+/* ==========================================================================
+   Dueby — brand tokens, type scale and global rules
+   ==========================================================================
+
+   TYPE SCALE — follow this from here on
+   ----------------------------------------------------------------------
+   Page title    (h1) : 44–72px desktop / 28–32px mobile, line-height 1.05–1.15
+   Section title (h2) : 46px desktop / 26px mobile
+   Card title    (h3) : 24px desktop / 20px mobile
+   Body               : 17px marketing / 16px in the app
+   Caption and hint   : 13–14px, colour var(--ink-3)
+
+   Minimum interactive target: 44px tall, everywhere, no exceptions.
+
+   Single light theme only. No dark mode, no theme toggle.
+   Never write a raw hex value outside this file — always use a token.
+   ========================================================================== */
+
+:root {
+  /* fonts */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* surfaces */
+  --paper:        #F6F3EC;   /* page background */
+  --surface:      #FFFFFF;   /* cards */
+  --surface-alt:  #F3EFE6;   /* quiet panels inside cards */
+  --line:         #E4DED2;   /* borders */
+  --line-strong:  #BDB4A2;   /* input borders, dashed guides */
+
+  /* text */
+  --ink:          #1B2A41;   /* headings and body */
+  --ink-2:        #3B4658;   /* secondary body */
+  --ink-3:        #4A5568;   /* captions, hints */
+
+  /* brand */
+  --accent:       #0F5F58;   /* teal: buttons, links, active state */
+  --accent-hover: #0B4A44;
+  --accent-soft:  #E3F1EE;   /* teal tint background */
+  --accent-ink:   #FFFFFF;   /* text on accent */
+  --focus-on-dark: #FFFFFF;  /* focus ring on the dark brand surface */
+
+  /* status */
+  --warn-bg:      #FEF3C7;  --warn-ink:   #78350F;  --warn-line: #F1D58A;
+  --good-bg:      #D1FAE5;  --good-ink:   #064E3B;
+  --info-bg:      #E0E7FF;  --info-ink:   #1E3A8A;
+  --bad-bg:       #B42318;  --bad-ink:    #FFFFFF;
+  --poor-bg:      #FFE4E6;  --poor-ink:   #881337;
+
+  /* shape */
+  --r-sm: 8px; --r-md: 12px; --r-lg: 14px; --r-xl: 18px; --r-2xl: 24px;
+}
+
+/* subject colours — small subject tags */
+:root {
+  --subj-maths-bg:     #DBEAFE;  --subj-maths-ink:     #1E3A8A;
+  --subj-english-bg:   #EDE9FE;  --subj-english-ink:   #4C1D95;
+  --subj-science-bg:   #D1FAE5;  --subj-science-ink:   #064E3B;
+  --subj-french-bg:    #FFEDD5;  --subj-french-ink:    #7C2D12;
+  --subj-history-bg:   #F3E8DC;  --subj-history-ink:   #5B3413;
+  --subj-geography-bg: #CFFAFE;  --subj-geography-ink: #164E63;
+  --subj-other-bg:     #EEEEEE;  --subj-other-ink:     #333333;
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+}
+
+/* Headings ---------------------------------------------------------------- */
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(28px, 6vw, 72px);
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: clamp(26px, 3.4vw, 46px);
+  line-height: 1.15;
+}
+
+h3 {
+  font-size: clamp(20px, 1.8vw, 24px);
+  line-height: 1.25;
+}
+
+/* Links ------------------------------------------------------------------- */
+
+a {
+  color: var(--accent);
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+/* Focus — never remove these outlines ------------------------------------- */
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The teal ring is too close to the dark brand panel to read, so white it is */
+.on-dark :focus-visible {
+  outline-color: var(--focus-on-dark);
+}
+
+/* Skip link — the first focusable element on every page ------------------ */
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 200;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: var(--r-md);
+  background: var(--ink);
+  color: var(--surface);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-250%);
+  transition: transform 0.15s ease-in-out;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  color: var(--surface);
+  transform: translateY(0);
+}
+
+/* Media ------------------------------------------------------------------- */
+
+img {
+  max-width: 100%;
+}
+
+/* Motion ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
