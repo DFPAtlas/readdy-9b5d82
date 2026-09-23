@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { AuthColumn } from '@/components/marketing/AuthColumn';
+import { supabase } from '@/lib/supabase/client';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -23,14 +24,23 @@ function ChevronLeftIcon() {
   );
 }
 
+const SEND_FAILED =
+  "We couldn't send the link just now. Try again in a minute.";
+
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (event: { preventDefault: () => void }) => {
+  const expired = searchParams.get('expired') === '1';
+
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+
+    if (submitting) return;
 
     const value = (inputRef.current?.value ?? email).trim();
 
@@ -41,7 +51,31 @@ export default function Login() {
     }
 
     setError('');
-    navigate('/login/check-email');
+    setSubmitting(true);
+
+    try {
+      const basePath = __BASE_PATH__.split('/').filter(Boolean).join('/');
+      const pathPrefix = basePath ? `/${basePath}` : '';
+
+      const { error: sendError } = await supabase.auth.signInWithOtp({
+        email: value,
+        options: {
+          emailRedirectTo: `${window.location.origin}${pathPrefix}/auth/callback`,
+        },
+      });
+
+      // The same message either way — never reveal whether an address is known.
+      if (sendError) {
+        setError(SEND_FAILED);
+        setSubmitting(false);
+        return;
+      }
+
+      navigate('/login/check-email');
+    } catch {
+      setError(SEND_FAILED);
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -71,6 +105,12 @@ export default function Login() {
             there&apos;s no password to remember.
           </p>
         </div>
+
+        {expired ? (
+          <p className="rounded-lg bg-warn-bg px-4 py-3 text-[15px] text-warn-ink">
+            That link has expired. Enter your email and we&apos;ll send a new one.
+          </p>
+        ) : null}
 
         <form className="flex flex-col gap-5" noValidate onSubmit={handleSubmit}>
           <div className="flex flex-col gap-2">
@@ -106,8 +146,13 @@ export default function Login() {
             ) : null}
           </div>
 
-          <Button size="lg" className="w-full" onClick={handleSubmit}>
-            Send me a sign-in link
+          <Button
+            size="lg"
+            className="w-full"
+            disabled={submitting}
+            onClick={handleSubmit}
+          >
+            {submitting ? 'Sending…' : 'Send me a sign-in link'}
           </Button>
         </form>
 

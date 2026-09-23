@@ -14,6 +14,8 @@ import Week from "@/pages/app/week/page";
 import HomeworkDetail from "@/pages/app/homework/[id]/page";
 import HomeworkHelp from "@/pages/app/homework/[id]/help/page";
 import Account from "@/pages/app/account/page";
+import NoAccess from "@/pages/app/no-access/page";
+import AuthCallback from "@/pages/auth/callback/page";
 
 const routes: RouteObject[] = [
   {
@@ -33,6 +35,14 @@ const routes: RouteObject[] = [
   {
     path: "/login/check-email",
     element: <CheckEmail />,
+  },
+  {
+    path: "/auth/callback",
+    element: <AuthCallback />,
+  },
+  {
+    path: "/app/no-access",
+    element: <NoAccess />,
   },
   {
     path: "/app",

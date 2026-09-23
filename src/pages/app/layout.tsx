@@ -1,6 +1,9 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
 import { ChildProvider } from "@/components/parent/ChildProvider";
 import { ChildSwitcher } from "@/components/parent/ChildSwitcher";
+import { supabase } from "@/lib/supabase/client";
+import { getCurrentPerson, getSessionUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 function HouseIcon() {
@@ -68,8 +71,66 @@ const NAV_ITEMS = [
   { to: "/app/week", label: "This week", Icon: CalendarIcon },
 ];
 
+type GuardState = "loading" | "anon" | "no-person" | "ready";
+
 export default function AppLayout() {
   const { pathname } = useLocation();
+  const [guard, setGuard] = useState<GuardState>("loading");
+
+  // Session guard. A single-page app has no middleware, so protecting /app/*
+  // happens here instead: no session goes to /login, a session with no linked
+  // person goes to /app/no-access.
+  useEffect(() => {
+    let cancelled = false;
+
+    const resolve = async () => {
+      try {
+        const user = await getSessionUser();
+        if (cancelled) return;
+
+        if (!user) {
+          setGuard("anon");
+          return;
+        }
+
+        const person = await getCurrentPerson();
+        if (cancelled) return;
+
+        setGuard(person ? "ready" : "no-person");
+      } catch {
+        if (!cancelled) setGuard("no-person");
+      }
+    };
+
+    void resolve();
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        setGuard("anon");
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      subscription.subscription.unsubscribe();
+    };
+  }, []);
+
+  if (guard === "loading") {
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center bg-paper">
+        <p className="text-[16px] text-ink-3">Loading…</p>
+      </div>
+    );
+  }
+
+  if (guard === "anon") {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (guard === "no-person") {
+    return <Navigate to="/app/no-access" replace />;
+  }
 
   return (
     <ChildProvider>
