@@ -18,7 +18,7 @@ export function WeekPanel({ onSelect, selectedId }: WeekPanelProps) {
   return (
     <div className="flex flex-col gap-[22px]">
       <div className="flex flex-col gap-3">
-        <h1 className="text-[26px] leading-tight text-ink">Week of 21 September</h1>
+        <h1 className="text-[26px] leading-tight text-ink">This week</h1>
         <p className="text-[15px] text-ink-3">
           What {child.name} is planned to do each evening. {child.yearGroup} guide: about{' '}
           {guide} minutes a night.

@@ -56,7 +56,7 @@ export function SiteHeader() {
                 navigate("/demo");
               }}
             >
-              Book a demo
+              Explore preview
             </Button>
           </span>
         </div>
